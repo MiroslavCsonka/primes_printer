@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require './lib/prime_generator'
+require './lib/table_printer'
+
+
+options = {}
+
+option_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: primeprinter [options]"
+
+  options[:num_of_primes] = 10
+  opts.on('-c', '--count NUMBER', 'Number of primes to output') do |num_of_primes|
+    num_of_primes = num_of_primes.to_i
+    options[:num_of_primes] = num_of_primes if num_of_primes > 0
+  end
+
+  opts.on('-h', '--help', 'Display this screen') do
+    puts opts
+    exit
+  end
+end
+
+option_parser.parse!
+
+primes = PrimeGenerator.new.take(options.fetch(:num_of_primes))
+
+primes_table = primes.map { |column| primes.map { |row| column * row } }
+
+
+puts TablePrinter.new(primes_table, heading: primes, side_heading: primes).print
